@@ -1,0 +1,106 @@
+
+Containerd のインストール
+
+https://qiita.com/n-yamanaka/items/86d4073d403cfba63dd3
+https://tech.virtualtech.jp/entry/2023/07/14/182708
+https://zenn.dev/dozo/articles/df36eb282969ec
+https://github.com/containerd/nerdctl/discussions/2084
+
+---
+インストール
+Containerd
+Download containerd
+
+wget https://github.com/containerd/containerd/releases/download/v1.7.7/containerd-1.7.7-linux-amd64.tar.gz
+sudo tar zxvf containerd-1.7.7-linux-amd64.tar.gz -C /usr/local/
+Configure containerd
+
+sudo wget \
+    https://raw.githubusercontent.com/containerd/containerd/main/containerd.service \
+    -O /etc/systemd/system/containerd.service
+
+sudo systemctl daemon-reload
+sudo systemctl start containerd
+sudo systemctl enable containerd
+
+
+---
+nerdctl
+||   関連ツールのインストール
+||   
+||   sudo apt install -y rootlesskit
+||   nerdctl のインストール
+||   
+||   wget https://github.com/containerd/nerdctl/releases/download/v1.6.2/nerdctl-1.6.2-linux-amd64.tar.gz
+||   sudo tar zxvf nerdctl-1.6.2-linux-amd64.tar.gz -C /usr/local/bin/
+||   containerd-rootless-setuptool.sh install
+
+wget https://github.com/containerd/nerdctl/releases/download/v1.6.2/nerdctl-full-1.6.2-linux-amd64.tar.gz
+sudo tar xzfz nerdctl-full-1.6.2-linux-amd64.tar.gz -C /usr/local/
+
+
+
+---
+BuildKit の有効化
+
+BuildKit のインストール
+
+wget https://github.com/moby/buildkit/releases/download/v0.12.3/buildkit-v0.12.3.linux-amd64.tar.gz
+sudo mkdir /usr/local/buildkit
+sudo tar zxvf buildkit-v0.12.3.linux-amd64.tar.gz -C /usr/local/buildkit
+
+echo "export PATH=$PATH:/usr/local/buildkit/bin" >> $HOME/.bashrc
+source $HOME/.bashrc
+BuildKit の有効化
+
+sudo apt-get install uidmap
+
+CONTAINERD_NAMESPACE=default containerd-rootless-setuptool.sh install-buildkit-containerd
+
+または
+----------
+$ wget "https://github.com/moby/buildkit/releases/download/v0.12.0/buildkit-v0.12.0.linux-amd64.tar.gz"
+$ tar zvxf buildkit-v0.12.0.linux-amd64.tar.gz
+$ mv bin/*  ~/.local/bin
+
+$ CONTAINERD_NAMESPACE=default containerd-rootless-setuptool.sh install-buildkit-containerd
+
+----------
+
+
+
+ranc のインストール
+
+sudo wget https://github.com/opencontainers/runc/releases/download/v1.1.9/runc.amd64 -O /usr/local/bin/runc
+sudo chmod +x /usr/local/bin/runc
+CNI Plugin のインストール
+
+wget https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz
+sudo mkdir -p /opt/cni/bin
+sudo tar -zxvf cni-plugins-linux-amd64-v1.3.0.tgz -C /opt/cni/bin
+
+
+sudo chmod 0755 /etc/cni
+
+
+動作確認
+
+nerdctl コマンド
+
+nerdctl run -d -p 8080:80 --name nginx-test nginx
+nerdctl compose コマンド
+
+docker-compose.yaml
+version: "3"
+services:
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "8080:80"
+コンテナの起動
+nerdctl compose up -d --build
+ブラウザや curl コマンド等で http://localhost:8080/ を参照すると nginx のデフォルト画面が参照できると思います。
+
+コマンドオプションを見る限りでは docker コマンド ⇒ nerdctl コマンドは、実行するコマンドを変更する程度で移行できそうです。docker compose コマンドについても nerdctl compose で同じ YAML ファイルが使用できそうです。
+

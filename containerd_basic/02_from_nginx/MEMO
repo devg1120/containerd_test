@@ -1,0 +1,16 @@
+
+https://qiita.com/leafeon00000/items/f259af4c9e86596b4a91
+
+ nerdctl build -t app02:0.0.1 .
+
+ nerdctl container run --name app02_ng  -d -p 8080:80 app02:0.0.1
+
+
+ http://127.0.0.1:8080/index.html
+ http://127.0.0.1:8080/
+
+
+ nerdctl exec -it app02_ng bash
+
+
+

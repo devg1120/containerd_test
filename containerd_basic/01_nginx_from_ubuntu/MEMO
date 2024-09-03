@@ -1,0 +1,6 @@
+nerdctl build -t app01:0.0.1 .
+#nerdctl container run --name app01_ng  --rm -d -p 8080:80 app01:0.0.1
+nerdctl container run --name app01_ng   -d -p 8080:80 app01:0.0.1
+nerdctl exec -it app01_ng bash
+
+
