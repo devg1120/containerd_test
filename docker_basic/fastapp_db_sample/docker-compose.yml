@@ -1,0 +1,29 @@
+
+version: '3'
+services:
+  webapp_fastapi:
+    build:
+      context: ./app ## docker build コマンドを実行した時のカレントワーキングディレクリをビルドコンテキストと呼ぶ。
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres_fastapi
+
+  postgres_fastapi:
+    image: postgres:13.1-alpine
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_DB: postgres_test
+      POSTGRES_USER: postgres_test
+      POSTGRES_PASSWORD: postgres_sample
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./app:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+

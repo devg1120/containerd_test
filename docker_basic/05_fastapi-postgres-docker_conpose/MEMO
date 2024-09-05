@@ -1,0 +1,33 @@
+
+https://qiita.com/nonamenme/items/5a598e90e448285b9bf2
+dockerでFastAPIとpostgresql
+
+
+setup
+$ git clone git@github.com:nonamenme/docker-fastapi-postgres.git
+$ cd docker-fastapi-postgres
+$ cp .env.example .env
+command
+・Image build
+
+$ docker-compose build
+・Container start up
+
+$ docker-compose up -d
+・Container stop
+
+$ docker-compose stop
+・Container remove
+
+$ docker-compose down
+APIURL
+http://localhost:8000
+
+SwaggerUI
+http://localhost:8000/docs
+
+migration execution
+$ docker-compose exec -T fastapi alembic upgrade head
+create migration file
+$ docker-compose exec -T fastapi alembic revision --autogenerate -
+

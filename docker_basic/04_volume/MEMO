@@ -1,0 +1,37 @@
+
+# node01
+https://cloudsmith.co.jp/blog/2021/08/1864709.html
+
+ docker build -t node:docker01 .
+
+ docker run -dit --rm --name node -p 8080:8080 node:docker01
+
+ボリュームマウントでアプリケーションを編集できるようにする
+   ボリュームマウントを使用してコンテナを立ち上げる
+   -v "$(pwd):/app"
+   #or#
+   --mount type=bind,src="$(pwd)",dst=/app
+
+匿名ボリュームで/app/node_moduleをマウントして
+  node_moduleについてはコンテナ内で作成されたものが優先
+  -v /app/node_modules
+   #or#
+  --mount type=volume,dst=/app/node_modules
+
+
+ docker run --rm -dit --name node -p 8080:8080 -v "$(pwd):/app" -v /app/node_modules node:docker01
+   #or#
+ docker run --rm -dit --name node -p 8080:8080 --mount type=bind,src="$(pwd)",dst=/app --mount type=volume,dst=/app/node_modules node:docker01
+
+
+> docker logs node
+
+> hoge@1.0.0 start /app
+> nodemon server.js
+
+[nodemon] 2.0.22
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node server.js`
+

@@ -1,0 +1,26 @@
+docker build -t docker_app03:0.0.1 .
+
+docker container run --name ubuntu1  --rm -td  docker_app03:0.0.1
+docker container run --name ubuntu2  --rm -td  docker_app03:0.0.1
+docker network create nw1
+docker network connect nw1 ubuntu1
+docker network connect nw1 ubuntu2
+
+
+docker  inspect  ubuntu1
+docker  inspect  ubuntu2
+
+docker exec -it ubuntu1 bash
+docker exec -it ubuntu2 bash
+
+docker network ls
+docker network inspect nw1
+
+
+-----
+docker stop ubuntu1
+docker stop ubuntu2
+docker rm ubuntu1
+docker rm ubuntu2
+docker network rm nw1
+docker rmi  docker_app03:0.0.1
